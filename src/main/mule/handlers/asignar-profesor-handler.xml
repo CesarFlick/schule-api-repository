@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="asignar-profesor-handlerSub_Flow" doc:id="5ba785f6-e5f2-4b59-b3f1-72b7c4ac60eb" >
+		<set-variable value="#[message.attributes.uriParams.clave]" doc:name="Guardar Clave Curso" doc:id="3128451d-995a-49f8-95d1-383b3759152f" variableName="clave"/>
+		<set-variable value="#[message.attributes.uriParams.numeroEmpleado]" doc:name="Guardar Numero Empleado" doc:id="324c3312-e18b-44b0-8408-3dbcee34b993" variableName="numeroEmpleado"/>
+		<flow-ref doc:name="Llamada Asignar Profesor Orquestador" doc:id="d88b56f3-cb2d-4f83-982b-25f040149697" name="asignar-profesor-orchestratorSub_Flow"/>
+	</sub-flow>
+</mule>

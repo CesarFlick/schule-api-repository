@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="actualizar-contactoSub_Flow" doc:id="2a15de35-572f-40e0-b3ea-12acc7cbb899" >
+		<set-variable value="#[message.attributes.uriParams.matricula]" doc:name="Guardar Matricula" doc:id="d262b3cb-2037-40d2-8c4c-a619d651fd02" variableName="matriculaAlumno"/>
+		<set-variable value="#[message.attributes.uriParams.numeroEmpleado]" doc:name="Guardar Numero Empleado" doc:id="ceea62d7-5355-4cfe-8561-a388736d030d" variableName="numeroEmpleado"/>
+		<flow-ref doc:name="Flow Reference" doc:id="e61f0f47-47ab-42ae-b20b-7f96422beb3a" name="actualizar-contacto-orquestadorSub_Flow"/>
+	</sub-flow>
+</mule>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="crear-alumno-orquestadorSub_Flow" doc:id="bbdaf643-1693-48b0-90f9-ec05fac0db16" >
+		<flow-ref doc:name="Llamada Base de Datos" doc:id="9ba1309a-43a0-40a3-88b5-c9b7fbbee38a" name="data-baseSub_Flow"/>
+		<ee:transform doc:name="Respuesta Matricula" doc:id="78504966-1cc8-470f-bac1-8ab154fdf8ef" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"matricula" : vars.alumnoNuevo.matricula
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

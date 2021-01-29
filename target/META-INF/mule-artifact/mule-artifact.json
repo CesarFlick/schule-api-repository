@@ -1,0 +1,70 @@
+{
+  "configs": [
+    "handlers/actualizar-contacto-handler.xml",
+    "handlers/matricula-cursos-handler.xml",
+    "orchestrator/matricula-cursos-orquestador.xml",
+    "handlers/asignar-profesor-handler.xml",
+    "handlers/actualizar-direccion-handler.xml",
+    "handlers/obtener-cursos-handler.xml",
+    "handlers/obtener-alumno-handler.xml",
+    "Administracion.xml",
+    "global.xml",
+    "handlers/crear-alumno-handler.xml",
+    "orchestrator/actualizar-contacto-orchestrator.xml",
+    "orchestrator/crear-profesor-orquestador.xml",
+    "orchestrator/obtener-cursos-orquestador.xml",
+    "orchestrator/actualizar-direccion-orquestador.xml",
+    "orchestrator/asignar-profesor-orchestrator.xml",
+    "orchestrator/crear-alumno-orquestador.xml",
+    "handlers/crear-profesor-handler.xml",
+    "clients/data-base.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:schule-api:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "Administracion.xml",
+        "api/Administracion.raml",
+        "api/examples/alumno.json",
+        "api/examples/contacto.json",
+        "api/examples/curso.json",
+        "api/examples/cursos.json",
+        "api/examples/direccion.json",
+        "api/examples/profesor.json",
+        "api/libraries/dataTypes.raml",
+        "api/libraries/resourceTypes.raml",
+        "api/libraries/security.raml",
+        "api/traits/errores-comunes.raml",
+        "application-types.xml",
+        "clients/data-base.xml",
+        "global.xml",
+        "handlers/actualizar-contacto-handler.xml",
+        "handlers/actualizar-direccion-handler.xml",
+        "handlers/asignar-profesor-handler.xml",
+        "handlers/crear-alumno-handler.xml",
+        "handlers/crear-profesor-handler.xml",
+        "handlers/matricula-cursos-handler.xml",
+        "handlers/obtener-alumno-handler.xml",
+        "handlers/obtener-cursos-handler.xml",
+        "log4j2.xml",
+        "orchestrator/actualizar-contacto-orchestrator.xml",
+        "orchestrator/actualizar-direccion-orquestador.xml",
+        "orchestrator/asignar-profesor-orchestrator.xml",
+        "orchestrator/crear-alumno-orquestador.xml",
+        "orchestrator/crear-profesor-orquestador.xml",
+        "orchestrator/matricula-cursos-orquestador.xml",
+        "orchestrator/obtener-cursos-orquestador.xml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

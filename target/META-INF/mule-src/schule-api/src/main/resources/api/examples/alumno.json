@@ -1,0 +1,22 @@
+{
+  "Nombre": "César",
+  "apellidoPaterno": "Rodríguez",
+  "apellidoMaterno": "Calderón",
+  "fechaNacimiento": "1995-02-27",
+  "direccion":{
+        "id": "DIR-999",
+        "calle": "Agustín Melgar",
+        "numeroInterior": "2" ,
+        "tipoUnidad": "Departamento",
+        "numeroExterior": "A23",
+        "ciudad": "Cuautla",
+        "estado": "Morelos",
+        "colonia": "Empleado Municipal"
+  }, 
+  "contacto": { 
+                "Telefono":"5524508130", 
+                "Email":"fable2548@gmail.com"
+            },
+  "carrera":"Antropologia",
+  "password": "1234567"  
+}

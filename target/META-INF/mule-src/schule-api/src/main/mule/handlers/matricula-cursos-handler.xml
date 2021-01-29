@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="matricula-cursos-handlerSub_Flow" doc:id="d4801651-0492-476a-946d-8d505b7b7aaf" >
+		<set-variable value="#[payload.matricula]" doc:name="Set Matricula Alumno" doc:id="55ff34ad-543b-4c8a-999a-67cb70b967ba" variableName="matriculaAlumno"/>
+		<set-variable value="#[message.attributes.uriParams.clave]" doc:name="Set Clave Curso" variableName="claveCurso"/>
+		<flow-ref doc:name="Llamada Matricula Cursos Orquestador" doc:id="f577a328-8ba7-4d1c-95a1-6a0b2a74c4fd" name="matricula-cursos-orquestadorSub_Flow"/>
+
+	</sub-flow>
+</mule>

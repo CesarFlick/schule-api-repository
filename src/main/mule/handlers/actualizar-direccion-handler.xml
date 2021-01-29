@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="actualizar-direccion-handlerSub_Flow" doc:id="f6fdc1ed-eb68-4049-959a-c6e98755725d" >
+		<ee:transform doc:name="Guardar Nueva Direccion" doc:id="dfee36bd-26c1-4e44-8a35-4586e72ff962" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="nuevaDireccion" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		
+		<set-variable value="#[message.attributes.uriParams.matricula]" doc:name="Guardar Matricula Alumno" doc:id="70431236-8672-4b0a-af4e-669de849db21" variableName="matriculaAlumno"/>
+		<set-variable value="#[message.attributes.uriParams.numeroEmpleado]" doc:name="Guardar Numero Empleado" doc:id="7e47009b-a480-49b0-b33a-5529193b2f84" variableName="numeroEmpleado"/>
+		<flow-ref doc:name="Lllamada Actualizar Direccion Orquestador" doc:id="037d01fa-8d75-46bf-83d5-c7f32f282751" name="actualizar-direccion-orquestadorSub_Flow"/>
+	</sub-flow>
+</mule>

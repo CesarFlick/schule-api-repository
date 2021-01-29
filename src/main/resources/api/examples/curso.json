@@ -1,0 +1,50 @@
+{
+  "nombre": "Comunicaciones Analogicas",
+  "clave": "UE-2022",
+  "creditos": 5,
+  "programa": "xml",
+  "profesor": {
+              "Nombre": "Ricardo",
+              "apellidoPaterno": "Pimentel",
+              "apellidoMaterno": "Martinez",
+              "fechaNacimiento": "1985-02-02",
+              "direccion":{
+                    "id": "DIR-999",
+                    "calle": "Montes de Oca",
+                    "numeroInterior": "2" ,
+                    "tipoUnidad": "Departamento",
+                    "numeroExterior": "A23",
+                    "ciudad": "",
+                    "estado": "Aguascalientes",
+                    "colonia": "Brisas"
+              }, 
+              "contacto": { 
+                          "Telefono":"5524508130", 
+                          "Email":"fable2548@gmail.com"
+                        },
+              "materia": "Física"        
+              },
+  "alumnos":[{
+              "Nombre": "César",
+              "apellidoPaterno": "Rodríguez",
+              "apellidoMaterno": "Calderón",
+              "fechaNacimiento": "1995-02-27",
+              "direccion":{
+                    "id": "DIR-999",
+                    "calle": "Agustín Melgar",
+                    "numeroInterior": "2" ,
+                    "tipoUnidad": "Casa",
+                    "numeroExterior": "A23",
+                    "ciudad": "Cuautla",
+                    "estado": "Morelos",
+                    "colonia": "Empleado Municipal"
+              }, 
+              "contacto": { 
+                          "Telefono":"5524508130", 
+                          "Email":"fable2548@gmail.com"
+                        },
+              "matricula": "199502271-CESROC-CC31",
+              "carrera":"Antropologia",
+  			  "password": "1234567"        
+              }]
+}

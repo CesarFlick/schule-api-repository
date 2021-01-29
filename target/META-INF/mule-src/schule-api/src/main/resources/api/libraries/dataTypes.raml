@@ -1,0 +1,64 @@
+#%RAML 1.0 Library
+usage: Aquí se encuentran los dataTypes que puede llegar a emplear la API.
+types:
+  Curso:
+    properties:
+      nombre:
+        maxLength: 120
+      clave:
+        pattern: "UE-[0-9]{4}-A|UE-[0-9]{4}"
+      creditos: integer
+      profesor: Profesor
+      alumnos:
+        type: array
+        items: Alumno
+        maxItems: 22
+  Persona:
+    properties:
+      Nombre:
+        maxLength: 30
+      apellidoPaterno:
+        maxLength: 30    
+      apellidoMaterno:
+        maxLength: 30
+      fechaNacimiento: date-only
+      direccion: Direccion
+      contacto?: Contacto
+  Contacto:
+    properties:
+      Telefono?:
+        type: string
+        maxLength: 11
+      Email?:
+        type: string
+        maxLength: 30
+  Profesor:
+    type: Persona
+    properties:
+      materia:
+        type: string
+        minLength: 3
+        maxLength: 30
+  Alumno:
+    type: Persona
+    properties:
+      carrera:
+        enum: ["Actuaria","Administracion","Administracion Agropecuaria","Administracion de Archivos y Gestion Documental","Antropologia","Arquitectura","Arquitectura de Paisaje","Arte y Diseno","Artes Visuales"]
+  Direccion:
+    properties:
+      calle:
+        minLength: 1
+        maxLength: 30
+      numeroInterior?:
+        minLength: 1
+        maxLength: 30      
+      tipoUnidad:
+        enum: ["Departamento","Edificio","Casa"]
+      numeroExterior:
+        minLength: 1
+        maxLength: 30        
+      ciudad?: string | nil
+      estado:
+        enum: ["Aguascalientes","Baja California","Baja California Sur","Campeche","Chiapas","Chihuahua","Ciudad de México","Coahuila","Colima","Durango","Estado de México","Guanajuato","Guerrero","Hidalgo","Jalisco","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas",]
+      colonia:
+        maxLength: 30

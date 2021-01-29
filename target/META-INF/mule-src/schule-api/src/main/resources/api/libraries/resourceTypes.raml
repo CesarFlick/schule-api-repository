@@ -1,0 +1,21 @@
+#%RAML 1.0 Library
+usage: Esta libreria contiene los tipos de metodo para actualizar un contacto y una direccion.
+resourceTypes:
+  actualizarContacto:
+    patch:
+      is: [errores-comunes]
+      description: Este metodo permite actualizar el contacto.
+      body:
+          type: type.Contacto
+          example: !include ../examples/contacto.json
+      responses:
+        204:
+  actualizarDireccion:
+    patch:
+      is: [errores-comunes]
+      description: Este metodo permite actualizar la direccion.
+      body:
+        type: type.Direccion
+        example: !include ../examples/direccion.json
+      responses:
+        204:

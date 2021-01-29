@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="crear-alumnoSub_Flow" doc:id="2a15de35-572f-40e0-b3ea-12acc7cbb899" >
+		<ee:transform doc:name="Construir Matricula Alumno" doc:id="1d350962-86cd-42f0-b0c7-3ddc570a455e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var nom = payload.Nombre[0] ++ payload.Nombre[1] ++ payload.Nombre[2]
+var ape = payload.apellidoPaterno[0] ++ payload.apellidoPaterno[1] ++ payload.apellidoPaterno[2]
+var apemat = payload.apellidoMaterno[0] ++ payload.apellidoMaterno[1] 
+var tiempo = now() as String {format: "yyyy-MM-dd"}
+var longitud = (sizeOf(payload.apellidoPaterno) + sizeOf(payload.apellidoMaterno)) as String
+output application/json
+---
+payload ++ {"matricula": payload.fechaNacimiento replace  /-/ with("") ++ "-" ++ upper(nom) ++ upper(ape) ++ "-" ++ upper(apemat) ++ longitud,
+	 		"fechaAlta": tiempo
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<set-variable value="#[payload]" doc:name="Guardar Alumno" doc:id="86e49993-d15c-4e70-beb7-61b05e208a1f" variableName="alumnoNuevo" />
+		<flow-ref doc:name="Llamada Crear Alumno Orquestador" doc:id="e61f0f47-47ab-42ae-b20b-7f96422beb3a" name="crear-alumno-orquestadorSub_Flow" />
+	</sub-flow>
+</mule>

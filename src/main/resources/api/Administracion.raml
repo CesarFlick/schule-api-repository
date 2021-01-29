@@ -1,0 +1,156 @@
+#%RAML 1.0
+title: Administracion Escolar
+protocols: https
+baseUri: www.universidadeveris.com
+mediaType: application/json
+uses:
+  type: libraries/dataTypes.raml
+  resourceType: libraries/resourceTypes.raml
+  mySecuritySchemes: libraries/security.raml
+traits:
+  errores-comunes: !include traits/errores-comunes.raml
+securedBy: [mySecuritySchemes.Basic]
+/profesor:
+  post:
+    is: [errores-comunes]
+    description: Este recurso permite dar de alta a un profesor.
+    body:
+        type: type.Profesor
+        example: !include examples/profesor.json
+    responses:
+      201:
+        description: Alta exitosa.
+  /{numeroEmpleado}:
+    description: Este recurso permite obtener toda la información de un profesor.
+    uriParameters:
+      numeroEmpleado:
+        description:
+        pattern: "[a-zA-Z]{4}-[0-9]{4}-[a-zA-Z]{2}[0-9]{2}"
+    get:
+      responses:
+        200:
+          body:
+            type: type.Profesor
+            example: !include examples/profesor.json
+  /{numeroEmpleado}/contacto:
+    description: Este recurso permite actualizar el contacto de un profesor con su numero de empleado.
+    uriParameters:
+      numeroEmpleado:
+        description: Identificador de profesor.
+        pattern: "[a-zA-Z]{4}-[0-9]{4}-[a-zA-Z]{2}[0-9]{2}"
+    type: resourceType.actualizarContacto
+  /{numeroEmpleado}/direccion:
+    description: Este recurso permite actualizar la direccion de un profesor con su numero de empleado.
+    uriParameters:
+      numeroEmpleado:
+        description: Identificador de profesor.
+        pattern: "[a-zA-Z]{4}-[0-9]{4}-[a-zA-Z]{2}[0-9]{2}"
+    type: resourceType.actualizarDireccion
+  /{numeroEmpleado}/asignar/{clave}:
+    description: Este recurso permite asignar un profesor a un curso con la clave del curso y con su numero de empleado.
+    uriParameters:
+      numeroEmpleado:
+        description: Identificador de profesor.
+        pattern: "[a-zA-Z]{4}-[0-9]{4}-[a-zA-Z]{2}[0-9]{2}"
+      clave:
+        description: Clave del curso al que se asignara profesor.
+        pattern: "[a-zA-Z]{4}-[0-9]{2}"
+    put:
+      is: [errores-comunes]
+      responses:
+        204:
+          description: Curso actualizado exitosamente
+/alumno:
+  post:
+    is: [errores-comunes]
+    description: Este recurso permite dar de alta a un alumno.
+    body:
+        type: type.Alumno
+        example: !include examples/alumno.json
+    responses:
+      201:
+        description: Alta exitosa.
+        body:
+          type: object
+          properties: 
+            matricula: string
+          example:
+            { "matricula": "19950227-SERROD-CA17"}
+  /{matricula}:
+    description: Este recurso permite actualizar el contacto de un alumno con su matricula.
+    uriParameters:
+      matricula:
+        description: Identificador de alumno.
+        pattern: "[0-9]{8}-[a-zA-Z]{6}-[a-zA-Z]{2}[0-9]{2}"
+    get:
+      queryParameters:
+          registro?:
+            description: Clave de alumno
+      responses:
+        200:
+          body:
+            type: type.Alumno
+            example: !include examples/alumno.json
+  /{matricula}/contacto:
+    description: Este recurso permite actualizar el contacto de un alumno con su matricula.
+    uriParameters:
+      matricula:
+        description: Identificador de alumno.
+        pattern: "[0-9]{8}-[a-zA-Z]{6}-[a-zA-Z]{2}[0-9]{2}"
+    type: resourceType.actualizarContacto
+  /{matricula}/direccion:
+    description: Este recurso permite actualizar la direccion de un alumno con su matricula.
+    uriParameters:
+      matricula:
+        description: Identificador de alumno.
+        pattern: "[0-9]{8}-[a-zA-Z]{6}-[a-zA-Z]{2}[0-9]{2}"
+    type: resourceType.actualizarDireccion
+/cursos:
+  get:
+    is: [errores-comunes]
+    description: Este metodo permite obtener la lista de cursos.
+    responses:
+      200:
+        body:
+          type: type.Curso[]
+          example: !include examples/cursos.json
+  /{clave}:
+    uriParameters:
+      clave:
+        pattern: "[a-zA-Z]{4}-[0-9]{2}"
+    get:
+      is: [errores-comunes]
+      description: Este metodo permite obtener informacion de un curso en especifico con la clave del curso.
+      responses:
+        200:
+          body:
+            type: type.Curso
+            example: !include examples/curso.json
+    put:
+      description: Este metodo permite actualizar el programa de un curso con la clave del curso.
+      body:
+        type: type.Curso
+
+    /alumno:
+      put:
+        is: [errores-comunes]
+        description: Este metodo permite a un alumno inscribirse a un curso con la clave del curso.
+        body:
+          type: object
+          properties:
+            matricula:
+              pattern: "[0-9]{8}-[a-zA-Z]{6}-[a-zA-Z]{2}[0-9]{2}"
+        responses:
+          204:
+      delete:
+        description: Este metodo permite dar de baja a un alumno de un curso con la clave del curso.
+        body:
+          type: object
+          properties:
+            matricula:
+              pattern: "[0-9]{8}-[a-zA-Z]{6}-[a-zA-Z]{2}[0-9]{2}"
+        responses:
+          204:
+            body:
+              type: string
+              example: Baja de alumno exitosa.

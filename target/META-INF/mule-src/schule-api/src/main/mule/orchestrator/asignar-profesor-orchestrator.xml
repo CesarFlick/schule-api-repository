@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="asignar-profesor-orchestratorSub_Flow" doc:id="4538d7b9-3fb5-43e8-9ba2-a3e20f9e7f94" >
+		<flow-ref doc:name="Asignar Profesor Base Datos" doc:id="f47b763b-c328-49ab-8e4f-495d5d170209" name="cursos-database"/>
+	</sub-flow>
+</mule>

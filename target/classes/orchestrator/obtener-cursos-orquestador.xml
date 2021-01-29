@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="obtener-cursos-orquestadorSub_Flow" doc:id="1dceab91-a92d-4f03-b029-e3baabd96f98" >
+		<flow-ref doc:name="Flow Reference" doc:id="4f5dbdf2-6b74-4147-ac4c-529f79d45f5a" name="obtener-cursos-database"/>
+		<ee:transform doc:name="Transform Message" doc:id="5898ff24-c3c4-4922-90f3-b3d7497cdc8b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

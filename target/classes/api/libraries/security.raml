@@ -1,0 +1,19 @@
+#%RAML 1.0 Library
+usage: Esta libreria contiene los esquemas de seguridad que puede implementar la API.
+securitySchemes:
+  Basic:
+    description: Esquema de seguridad que espera un usuario y su contrseña.
+    type: Basic Authentication
+  OAuth_2_0:
+    type: OAuth 2.0
+    describedBy:
+      headers:
+        Authorization:
+          type: string
+      queryParameters:
+        access_token:
+          type: string
+    settings:
+      accessTokenUri: www.accessTokenUri.com
+      authorizationUri: www.authorizationUri.com
+      authorizationGrants: [authorization_code]

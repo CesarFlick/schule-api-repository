@@ -1,0 +1,16 @@
+#%RAML 1.0 Trait
+responses:
+  400:
+    description: Peticion mala, sintaxis de petición malformada
+  401:
+    description: No autorizado, la petición no ha sido ejecutada porque carece de credenciales válidas de autenticación para el recurso solicitado
+  403:
+    description: Prohibido, indica que el servidor ha entendido nuestra petición, pero se niega a autorizarla.
+  404:
+    description: Recurso no encontrado.
+  405:
+    description: Metodo no permitido, el servidor entiende la petición pero el recurso no soporta el metodo que recibe.
+  406:
+    description: No aceptado, cuando el tipo de respuesta no es el tipo que el cliente ha declarado recibir.
+  500:
+    description: Error de servidor.

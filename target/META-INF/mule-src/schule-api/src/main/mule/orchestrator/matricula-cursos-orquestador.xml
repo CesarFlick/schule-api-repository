@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="matricula-cursos-orquestadorSub_Flow" doc:id="82279a90-0a97-497a-84cd-f6b2d9586693" >
+		<flow-ref doc:name="Cursos DB" doc:id="ca0b334a-fd3b-4a65-b0e3-c40b2c0c749e" name="obtener-cursos-database"/>
+	</sub-flow>
+</mule>

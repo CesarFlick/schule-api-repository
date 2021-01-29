@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="obtener-cursos-handlerSub_Flow" doc:id="18d6cd5a-8aa1-448e-9310-0c200c43b3a8" >
+		<set-variable value="#[message.attributes.uriParams.clave]" doc:name="Guardar Clave Curso" doc:id="502dac51-1f20-4a5e-9c50-ccfeaba76b94" variableName="claveCurso"/>
+		<flow-ref doc:name="Llamada Obtener Cursos Orquestador" doc:id="0730f26c-22fa-434e-aa23-f6a3b73f7c94" name="obtener-cursos-orquestadorSub_Flow"/>
+	</sub-flow>
+</mule>

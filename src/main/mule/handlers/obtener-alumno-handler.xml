@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="obtener-alumnoSub_Flow" doc:id="2f9a7a59-4034-4491-a0d9-70a797b203c7" >
+		<set-variable value="#[message.attributes.uriParams.matricula]" doc:name="Set Matricula" doc:id="4b8e68b9-1bea-413e-ba5a-10d5979a14b7" variableName="matricula"/>
+		<set-variable value="#[message.attributes.queryParams.registro]" doc:name="Set Contrasena" doc:id="2e08ed14-3f9b-4282-82d0-6700dd499038" variableName="registro"/>
+		<choice doc:name="Choice" doc:id="4c8cfabc-b2dd-45d5-b13c-1ceed024c960" >
+			<when expression="#[vars.registro != null]">
+				<flow-ref doc:name="Obtener Alumno Clave" doc:id="71e132c7-356a-4d44-98a0-b661ee9d750b" name="obtener-alumno-clave"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="Obtener Alumno" doc:id="3dee8806-3b60-4629-8779-a640e6c76f1b" name="obtener-alumno" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Build Response" doc:id="ad42d594-8a97-4259-8c7f-2be0f90da9b2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var persona = vars.basicInfo[0]
+var materias = vars.materiasEstudiante
+output application/json
+---
+ {
+  "Nombre": persona.NOMBRE,
+  "apellidoPaterno": persona.APELLIDO_PATERNO,
+  "apellidoMaterno": persona.APELLIDO_MATERNO,
+  "fechaNacimiento": persona.FECHA_NACIMIENTO,
+  "direccion":{
+        "calle": persona.CALLE,
+        "numeroInterior": persona.NUMERO_INTERIOR,
+        "tipoUnidad": persona.TIPO_UNIDAD,
+        "numeroExterior": persona.NUMERO_EXTERIOR,
+        "ciudad": persona.CIUDAD,
+        "estado": persona.ESTADO,
+        "colonia": persona.COLONIA
+  }, 
+  "contacto": { 
+              "telefono": persona.TELEFONO,
+              "email": persona.E_MAIL
+            },
+  "carrera": persona.CARRERA,
+  "materias": materias     
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b094dd0b-e7ff-4992-885d-4acfd047fd5c" message="#[payload]"/>
+	</sub-flow>
+</mule>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+    <http:listener-config name="Administracion-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="Administracion-config" api="Administracion.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="c25d68de-f1ca-4b61-b2d5-a6c90558f4d3">
+        <db:mssql-connection host="localhost" instanceName="MSSQLSERVER" port="1434" user="sa" password="Sometimes123.!" databaseName="GestionEscolar" />
+    </db:config>
+    <flow name="Administracion-main">
+        <http:listener config-ref="Administracion-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="Administracion-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"error": error.description }]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"error": error.description }]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"error": error.description }]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"error": error.description }]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"error": error.description }]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="patch:\alumno\(matricula)\contacto:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Actualizar Contacto" doc:id="536f64a4-2bcf-4ea3-9141-f11bc65c69cf" name="actualizar-contactoSub_Flow" />
+        <ee:transform doc:name="Transform Message" doc:id="9c6b2ea3-3d76-439e-a15a-02e41bb2352d">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"mensaje": "Actualización exitosa"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message="put:\alumno\(matricula)\contacto:application\json:Administracion-config" />
+    </flow>
+    <flow name="patch:\alumno\(matricula)\direccion:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Actualizar Direccion" doc:id="579bc457-efa6-4333-80f9-8cd601fbbaeb" name="actualizar-direccion-handlerSub_Flow" />
+        <logger level="INFO" message="put:\alumno\(matricula)\direccion:application\json:Administracion-config" />
+    </flow>
+    <flow name="put:\profesor\(numeroEmpleado)\asignar\(clave):application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Asignar Profesor" doc:id="9e79d7cd-7b87-4bce-a8f0-7f83bb6eeca7" name="asignar-profesor-handlerSub_Flow" />
+        <logger level="INFO" message="put:\profesor\(numeroEmpleado)\asignar\(clave):application\json:Administracion-config" />
+    </flow>
+    <flow name="patch:\profesor\(numeroEmpleado)\contacto:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Actualizar Contacto" doc:id="aedb6c10-5c90-415f-acbf-4c91f7a64772" name="actualizar-contactoSub_Flow" />
+        <logger level="INFO" message="put:\profesor\(numeroEmpleado)\contacto:application\json:Administracion-config" />
+    </flow>
+    <flow name="patch:\profesor\(numeroEmpleado)\direccion:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Actualizar Dirección" doc:id="0e5c857d-02eb-42ea-a135-132da4151625" name="actualizar-direccion-handlerSub_Flow" />
+        <logger level="INFO" message="put:\profesor\(numeroEmpleado)\direccion:application\json:Administracion-config" />
+    </flow>
+    <flow name="post:\alumno:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Crear Alumno" doc:id="322f048c-9940-48b4-8bc4-354b742dc9f2" name="crear-alumnoSub_Flow" />
+        <logger level="INFO" message="post:\alumno:application\json:Administracion-config" />
+    </flow>
+    <flow name="post:\profesor:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Crear Profesor" doc:id="7cc90704-296f-40c0-8e3b-a0b2bc6d23a5" name="crear-profesor-handlerSub_Flow" />
+        <logger level="INFO" message="post:\profesor:application\json:Administracion-config" />
+    </flow>
+    <flow name="put:\cursos\(clave)\alumno:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Inscribir Alumno" doc:id="6664b7a9-be6e-4e1c-8dc7-42d6af6e51fc" name="matricula-cursos-handlerSub_Flow" />
+    </flow>
+    <flow name="put:\cursos\(clave):application\json:Administracion-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="clave">attributes.uriParams.'clave'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" message="put:\cursos\(clave):application\json:Administracion-config" />
+    </flow>
+    <flow name="delete:\cursos\(clave)\alumno:application\json:Administracion-config">
+        <flow-ref doc:name="Llamada Desinscribir Alumno" doc:id="3cfc822c-1b81-4882-b162-eb41174cff2e" name="matricula-cursos-handlerSub_Flow" />
+    </flow>
+    <flow name="get:\cursos:Administracion-config">
+        <flow-ref doc:name="Llamada Obtener Cursos" doc:id="1b48e83f-d845-4071-a20a-c13584a41832" name="obtener-cursos-handlerSub_Flow" />
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" doc:id="85efe96d-503e-4fe5-8fc3-fcb398b55f45" message="#[payload]" />
+    </flow>
+    <flow name="get:\cursos\(clave):Administracion-config">
+        <flow-ref doc:name="Obtener Curso por ID" doc:id="07863c30-f32f-4a20-972e-98490b898bd1" name="obtener-cursos-handlerSub_Flow" />
+    </flow>
+    <flow name="get:\alumno\(matricula):Administracion-config" doc:id="3b879c60-6476-435e-ae84-fd8f6af429b5">
+        <flow-ref doc:name="Flow Reference" doc:id="77681f71-d52b-4089-bd0f-03ce7085523b" name="obtener-alumnoSub_Flow" />
+        <logger level="INFO" doc:name="Logger" doc:id="7b24d2fa-8585-46f6-9c79-36d5250a5e1d" />
+    </flow>
+    <flow name="put:\profesor\(numeroEmpleado)\asignar\(clave):Administracion-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="numeroEmpleado">attributes.uriParams.'numeroEmpleado'</ee:set-variable>
+                <ee:set-variable variableName="clave">attributes.uriParams.'clave'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" message="put:\profesor\(numeroEmpleado)\asignar\(clave):Administracion-config" />
+    </flow>
+    <flow name="get:\profesor\(numeroEmpleado):Administracion-config">
+        <set-variable value="#[attributes.uriParams.'numeroEmpleado']" doc:name="Set Variable" doc:id="48f682e1-82db-45fe-9629-42bf447b8d39" variableName="numeroEmpleado" />
+        <flow-ref doc:name="Llamada Obtener Docente" doc:id="540989df-0ec1-4750-adc0-6b8596e93953" name="obtener-docente" />
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+var persona = payload[0]
+output application/json
+---
+ {
+  "Nombre": persona.NOMBRE,
+  "apellidoPaterno": persona.APELLIDO_PATERNO,
+  "apellidoMaterno": persona.APELLIDO_MATERNO,
+  "fechaNacimiento": persona.FECHA_NACIMIENTO,
+  "direccion":{
+  	    "id": "DIR-999",
+        "calle": persona.CALLE,
+        "numeroInterior": persona.NUMERO_INTERIOR ,
+        "tipoUnidad": persona.TIPO_UNIDAD,
+        "numeroExterior": persona.NUMERO_EXTERIOR,
+        "ciudad": persona.CIUDAD,
+        "estado": persona.ESTADO,
+        "colonia": persona.COLONIA
+  }, 
+  "contacto": { 
+              "telefono": persona.TELEFONO,
+              "email": persona.E_MAIL
+            },
+  "materia": persona.MATERIA       
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

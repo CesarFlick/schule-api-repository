@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="nuevaDireccion" format="json">
+      <types:shape format="weave" example="api/examples/direccion.json"><![CDATA[%dw 2.0
+
+type nuevaDireccion = {|
+  calle: String, 
+  numeroInterior: String, 
+  tipoUnidad: String, 
+  numeroExterior: String, 
+  ciudad: String, 
+  estado: String, 
+  colonia: String
+|} {"example": "{\\\"calle\\\":\\\"Sao Paulo\\\",\\\"numeroInterior\\\":\\\"1\\\",\\\"tipoUnidad\\\":\\\"Departamento\\\",\\\"numeroExterior\\\":\\\"A34\\\",\\\"ciudad\\\":\\\"\\\",\\\"estado\\\":\\\"Veracruz\\\",\\\"colonia\\\":\\\"Lomas\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#dfee36bd-26c1-4e44-8a35-4586e72ff962">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="nuevaDireccion"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d8d6cfa0-9b7b-4dbe-9885-890c8ee391d3">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="nuevaDireccion"/>
+        </types:message>
+        <types:variables>
+          <types:variable name="nuevaDireccion" type="nuevaDireccion"/>
+        </types:variables>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

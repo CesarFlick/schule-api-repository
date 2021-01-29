@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="obtener-cursos-database" doc:id="c7b46bce-e13a-4534-8c1e-1cf144629f64" >
+		<choice doc:name="Choice" doc:id="508f3643-c42e-40e8-9c85-1820fcc7515f" >
+			<when expression="#[isEmpty(vars.claveCurso)]">
+				<db:select doc:name="Obtener Cursos" doc:id="b0b845a1-e000-4037-ae50-8bd64fd5d690" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM CURSOS]]></db:sql>
+		</db:select>
+			</when>
+			<when expression="#[attributes.method == 'DELETE']">
+				<db:delete doc:name="Desinscribir Alumno Curso" doc:id="1c62cc8b-60ef-4eaa-8fda-06a29e645854" config-ref="Database_Config">
+					<db:sql ><![CDATA[DELETE FROM CURSO_ALUMNO WHERE MATRICULA_ALUMNO =:matriculaAlumno AND CLAVE_CURSO=:claveCurso;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	matriculaAlumno: vars.matriculaAlumno,
+	claveCurso: vars.claveCurso
+}]]]></db:input-parameters>
+				</db:delete>
+			</when>
+			<when expression="#[isEmpty(vars.matriculaAlumno) == false]">
+				<db:insert doc:name="Asignar Alumno a Curso" doc:id="4185c400-0eb3-4a24-b720-70dc47a7c79e" config-ref="Database_Config">
+					<db:sql ><![CDATA[INSERT INTO CURSO_ALUMNO (MATRICULA_ALUMNO,CLAVE_CURSO) VALUES (:matriculaAlumno,:claveCurso);
+]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	matriculaAlumno: vars.matriculaAlumno,
+	claveCurso: vars.claveCurso
+}]]]></db:input-parameters>
+				</db:insert>
+			</when>
+			<otherwise >
+				<db:select doc:name="Obtener Curso ID" doc:id="186a6d9c-c019-4ed7-9aa6-db1c36dfc846" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM CURSOS WHERE CLAVE = :claveCurso
+]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	claveCurso: vars.claveCurso
+}]]]></db:input-parameters>
+				</db:select>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="cursos-database" doc:id="6e7e843b-3412-46a9-a4d8-64449ffb827d" >
+		<db:update doc:name="Asignar Docente a Curso" doc:id="383a2fd5-b538-42d6-a25e-91f2d8711f21" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE CURSOS SET DOCENTE = :numeroEmpleado WHERE CLAVE = :claveCurso]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	numeroEmpleado: vars.numeroEmpleado,
+	claveCurso: vars.clave
+}]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<sub-flow name="crear-profesor-cliente" doc:id="72542218-dca0-4920-89a4-3615c0d4cf99" >
+		<db:insert doc:name="Insertar Docente" doc:id="a75f7b74-e7df-48de-bc2d-af9d1815a6da" config-ref="Database_Config">
+			<db:sql ><![CDATA[Insert into Docentes (Num_Empleado,Nombre,Apellido_Paterno,Apellido_Materno,Fecha_Nacimiento,Materia,Fec_alta) values (:numeroEmpleado,:nombre,:apellidoPaterno,:apellidoMaterno,:fechaNacimiento,:materia,:fecAlta)
+Insert into Contactos_Docentes(Num_Empleado,Telefono) values (:numeroEmpleado,:Telefono)
+Insert into Direccion_Docente(Num_Empleado,Calle,Numero_Interior,Tipo_Unidad,Numero_Exterior,Ciudad,Estado,Colonia) values (:numeroEmpleado,:Calle,:NumeroInterior,:TipoUnidad,:NumeroExterior,:Ciudad,:Estado,:Colonia)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+ numeroEmpleado: vars.docenteNuevo.numeroEmpleado,
+ nombre: vars.docenteNuevo.Nombre,
+ apellidoPaterno: vars.docenteNuevo.apellidoPaterno,
+ apellidoMaterno: vars.docenteNuevo.apellidoMaterno,
+ fechaNacimiento: vars.docenteNuevo.fechaNacimiento,
+ materia: vars.docenteNuevo.materia,
+ fecAlta: vars.docenteNuevo.fechaAlta,
+ Tipo: vars.docenteNuevo.contacto.tipo,
+ Telefono: vars.docenteNuevo.contacto.valor,
+ Calle: vars.docenteNuevo.direccion.calle,
+ NumeroInterior: vars.docenteNuevo.direccion.numeroInterior,
+ TipoUnidad: vars.docenteNuevo.direccion.tipoUnidad,
+ NumeroExterior: vars.docenteNuevo.direccion.numeroExterior,
+ Ciudad: vars.docenteNuevo.direccion.ciudad,
+ Estado: vars.docenteNuevo.direccion.estado,
+ Colonia: vars.docenteNuevo.direccion.colonia
+}]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+	<sub-flow name="obtener-docente" doc:id="6e6731f5-3aa0-42ec-94d4-5b4caebf32a7" >
+		<db:select doc:name="Obtener Docente" doc:id="6ec75dbf-eb1b-4ad4-86f2-22294024045c" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT DOCENTES.FECHA_NACIMIENTO,DOCENTES.NOMBRE, DOCENTES.APELLIDO_PATERNO, DOCENTES.APELLIDO_MATERNO,DOCENTES.MATERIA, DOCENTES.FEC_ALTA, CONTACTOS_DOCENTES.E_MAIL, CONTACTOS_DOCENTES.TELEFONO, DIRECCION_DOCENTE.CALLE,
+DIRECCION_DOCENTE.NUMERO_INTERIOR, DIRECCION_DOCENTE.TIPO_UNIDAD, DIRECCION_DOCENTE.NUMERO_EXTERIOR, DIRECCION_DOCENTE.CIUDAD, DIRECCION_DOCENTE.ESTADO, DIRECCION_DOCENTE.COLONIA FROM DOCENTES
+INNER JOIN CONTACTOS_DOCENTES ON DOCENTES.NUM_EMPLEADO=CONTACTOS_DOCENTES.NUM_EMPLEADO
+INNER JOIN DIRECCION_DOCENTE ON DOCENTES.NUM_EMPLEADO=DIRECCION_DOCENTE.NUM_EMPLEADO WHERE DOCENTES.NUM_EMPLEADO = :numeroEmpleado ;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	numeroEmpleado: vars.numeroEmpleado
+}]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="obtener-alumno" doc:id="bdbb0578-e555-498d-9463-21e2213617cf" >
+		<db:select doc:name="Select" doc:id="7ea71620-9fc9-4480-868e-8f5d4269768d" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT CURSO_ALUMNO.CLAVE_CURSO,ALUMNOS.FECHA_NACIMIENTO,ALUMNOS.NOMBRE, ALUMNOS.APELLIDO_PATERNO, ALUMNOS.APELLIDO_MATERNO,ALUMNOS.CARRERA, ALUMNOS.FEC_ALTA, CONTACTOS_ALUMNOS.E_MAIL, CONTACTOS_ALUMNOS.TELEFONO, DIRECCION_ALUMNO.CALLE,
+DIRECCION_ALUMNO.NUMERO_INTERIOR, DIRECCION_ALUMNO.TIPO_UNIDAD, DIRECCION_ALUMNO.NUMERO_EXTERIOR, DIRECCION_ALUMNO.CIUDAD, DIRECCION_ALUMNO.ESTADO, DIRECCION_ALUMNO.COLONIA FROM ALUMNOS
+INNER JOIN CONTACTOS_ALUMNOS ON ALUMNOS.MATRICULA=CONTACTOS_ALUMNOS.MATRICULA_ALUMNO
+INNER JOIN DIRECCION_ALUMNO ON ALUMNOS.MATRICULA=DIRECCION_ALUMNO.MATRICULA_ALUMNO
+LEFT JOIN CURSO_ALUMNO ON ALUMNOS.MATRICULA=CURSO_ALUMNO.MATRICULA_ALUMNO WHERE MATRICULA = :matricula;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"matricula": vars.matricula
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[payload]" doc:name="Guardar Inf Estudiante" doc:id="7a963201-80e3-4ee1-9ae6-2a6641f0401a" variableName="basicInfo"/>
+		<ee:transform doc:name="Transform Message" doc:id="d7beb2ba-3214-42a5-9663-cf062e6d42e0" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="materiasEstudiante" ><![CDATA[%dw 2.0
+output application/json
+---
+payload map $.CLAVE_CURSO]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="obtener-alumno-clave" doc:id="aebddc28-e12d-4a01-87fe-7bca2e2ce783" >
+		<db:select doc:name="Select" doc:id="f306f619-302d-44d4-a069-78b295b89a27" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT CURSO_ALUMNO.CLAVE_CURSO,ALUMNOS.FECHA_NACIMIENTO,ALUMNOS.NOMBRE, ALUMNOS.APELLIDO_PATERNO, ALUMNOS.APELLIDO_MATERNO,ALUMNOS.CARRERA, ALUMNOS.FEC_ALTA, CONTACTOS_ALUMNOS.E_MAIL, CONTACTOS_ALUMNOS.TELEFONO, DIRECCION_ALUMNO.CALLE,
+DIRECCION_ALUMNO.NUMERO_INTERIOR, DIRECCION_ALUMNO.TIPO_UNIDAD, DIRECCION_ALUMNO.NUMERO_EXTERIOR, DIRECCION_ALUMNO.CIUDAD, DIRECCION_ALUMNO.ESTADO, DIRECCION_ALUMNO.COLONIA FROM ALUMNOS
+INNER JOIN CONTACTOS_ALUMNOS ON ALUMNOS.MATRICULA=CONTACTOS_ALUMNOS.MATRICULA_ALUMNO
+INNER JOIN DIRECCION_ALUMNO ON ALUMNOS.MATRICULA=DIRECCION_ALUMNO.MATRICULA_ALUMNO
+LEFT JOIN CURSO_ALUMNO ON ALUMNOS.MATRICULA=CURSO_ALUMNO.MATRICULA_ALUMNO WHERE MATRICULA = :matricula AND PASSWORD = :password;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"matricula": vars.matricula,
+	"password": vars.registro
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="fbd577ab-7266-45a7-a004-a62fb225684f" variableName="basicInfo"/>
+		<ee:transform doc:name="Transform Message" doc:id="3cc63cc6-2937-4d5f-92c7-642abc990105" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map $.CLAVE_CURSO]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="data-baseSub_Flow" doc:id="2f49476e-111e-423f-8be8-6c7776371812" >
+        <db:insert doc:name="Insert into Alumnos Table" doc:id="f3030c79-79ef-4f5f-949c-ad42ba2d6b70" config-ref="Database_Config">
+			<db:sql ><![CDATA[Insert into Alumnos (Matricula,Nombre,Apellido_Paterno,Apellido_Materno,Carrera,Fecha_Nacimiento,Fec_alta, Password) values (:Matricula,:Nombre,:ApellidoPaterno,:ApellidoMaterno,:Carrera,:FechaNacimiento,:FechaAlta, :Password)
+Insert into Contactos_Alumnos(Matricula_alumno,Telefono) values (:Matricula,:Telefono)
+Insert into Direccion_Alumno(Matricula_alumno,Calle,Numero_Interior,Tipo_Unidad,Numero_Exterior,Ciudad,Estado,Colonia) values (:Matricula,:Calle,:NumeroInterior,:TipoUnidad,:NumeroExterior,:Ciudad,:Estado,:Colonia)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	Matricula: payload.matricula,
+	Nombre: payload.Nombre,
+	ApellidoPaterno: payload.apellidoPaterno,
+	ApellidoMaterno: payload.apellidoMaterno,
+	FechaNacimiento: payload.fechaNacimiento,
+	FechaAlta: payload.fechaAlta,
+	Telefono: payload.contacto.valor,
+	Calle: payload.direccion.calle,
+	NumeroInterior: payload.direccion.numeroInterior,
+	TipoUnidad: payload.direccion.tipoUnidad,
+	NumeroExterior: payload.direccion.numeroExterior,
+	Ciudad: payload.direccion.ciudad,
+	Estado: payload.direccion.estado,
+	Colonia: payload.direccion.colonia,
+    Carrera: payload.carrera,
+    Password: payload.password
+}]]]></db:input-parameters>
+		</db:insert>
+	
+</sub-flow>
+	<sub-flow name="actualizar-contacto-cliente" >
+		<choice doc:name="Choice" doc:id="350938a0-755a-4620-a179-5ab9b73cc10d" >
+			<when expression="#[isEmpty(vars.numeroEmpleado)]">
+				<choice doc:name="Choice" doc:id="c93c85a3-c271-4d6f-a46a-3980005df609" >
+					<when expression="#[isEmpty(payload.Telefono)]">
+						<db:update doc:name="Actualizar Email Alumno" doc:id="d3060d0d-a86b-440b-a21b-225989e9b041" config-ref="Database_Config">
+							<db:sql ><![CDATA[UPDATE CONTACTOS_ALUMNOS SET E_MAIL = :Email WHERE MATRICULA_ALUMNO = :matriculaAlumno
+]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+	Email: payload.Email,
+	matriculaAlumno: vars.matriculaAlumno
+}]]]></db:input-parameters>
+						</db:update>
+					</when>
+					<otherwise >
+						<db:update doc:name="Actualizar Telefono Alumno" doc:id="702a17fc-dd5e-483f-9362-ba185a494981" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE CONTACTOS_ALUMNOS SET TELEFONO = :telefono WHERE MATRICULA_ALUMNO = :matriculaAlumno
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	telefono: payload.Telefono,
+	matriculaAlumno: vars.matriculaAlumno
+}]]]></db:input-parameters>
+		</db:update>
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise >
+				<choice doc:name="Choice" doc:id="0667e578-81a3-470c-912d-cab89b3570b0" >
+					<when expression="#[isEmpty(payload.Telefono)]">
+						<db:update doc:name="Actualizar Email Profesor" doc:id="e22382d4-8408-4c3f-aac1-d4f4f76e77bd" config-ref="Database_Config">
+							<db:sql ><![CDATA[UPDATE CONTACTOS_DOCENTES SET E_MAIL = :Email WHERE NUM_EMPLEADO = :numeroEmpleado
+]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+	Email: payload.Email,
+	numeroEmpleado: vars.numeroEmpleado
+}]]]></db:input-parameters>
+						</db:update>
+					</when>
+					<otherwise >
+						<db:update doc:name="Actualizar Telefono Profesor" doc:id="d97699aa-be40-4daa-98d3-93090e5db0b0" config-ref="Database_Config">
+					<db:sql><![CDATA[UPDATE CONTACTOS_DOCENTES SET TELEFONO = :Telefono WHERE NUM_EMPLEADO = :numeroEmpleado
+]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	Telefono: payload.Telefono,
+	numeroEmpleado: vars.numeroEmpleado
+}]]]></db:input-parameters>
+				</db:update>
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="acualizar-direccion-cliente" doc:id="3bbee7c5-4f8a-4ed6-859d-c82ac1f86f68" >
+		<choice doc:name="Choice" doc:id="14428966-4063-4ff0-911e-ccb7b94f371b" >
+			<when expression="#[isEmpty(vars.numeroEmpleado)]">
+				<db:update doc:name="Actualizar Direccion Alumno" doc:id="d8d6cfa0-9b7b-4dbe-9885-890c8ee391d3" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE DIRECCION_ALUMNO SET CALLE =:calle, NUMERO_INTERIOR =:numeroInterior, TIPO_UNIDAD =:tipoUnidad, NUMERO_EXTERIOR =:numeroExterior, CIUDAD =:ciudad, ESTADO =:estado, COLONIA =:colonia WHERE MATRICULA_ALUMNO =:matriculaAlumno
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	calle: vars.nuevaDireccion.calle,
+	numeroInterior: vars.nuevaDireccion.numeroInterior,
+	numeroExterior: vars.nuevaDireccion.numeroExterior,
+	tipoUnidad: vars.nuevaDireccion.tipoUnidad,
+	ciudad: vars.nuevaDireccion.ciudad,
+	estado: vars.nuevaDireccion.estado,
+	colonia: vars.nuevaDireccion.colonia,
+	matriculaAlumno: vars.matriculaAlumno
+	}]]]></db:input-parameters>
+		</db:update>
+			</when>
+			<otherwise >
+				<db:update doc:name="Actualizar Direccion Profesor" doc:id="1e96606e-ed5a-4a65-9f7a-0fb5f3baa07e" config-ref="Database_Config">
+					<db:sql ><![CDATA[UPDATE DIRECCION_DOCENTE SET CALLE =:calle, NUMERO_INTERIOR =:numeroInterior, TIPO_UNIDAD =:tipoUnidad, NUMERO_EXTERIOR =:numeroExterior, CIUDAD =:ciudad, ESTADO =:estado, COLONIA =:colonia WHERE NUM_EMPLEADO =:numeroEmpleado
+]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	calle: vars.nuevaDireccion.calle,
+	numeroInterior: vars.nuevaDireccion.numeroInterior,
+	numeroExterior: vars.nuevaDireccion.numeroExterior,
+	tipoUnidad: vars.nuevaDireccion.tipoUnidad,
+	ciudad: vars.nuevaDireccion.ciudad,
+	estado: vars.nuevaDireccion.estado,
+	colonia: vars.nuevaDireccion.colonia,
+	numeroEmpleado: vars.numeroEmpleado
+}]]]></db:input-parameters>
+				</db:update>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="crear-profesor-orquestadorSub_Flow" doc:id="5bed94cb-5314-4a0e-b0b4-3acec0954532" >
+		<ee:transform doc:name="Crear Codigo Empleado" doc:id="e6d2737a-ee62-42ae-b21f-67e539b4d30b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::core::Strings
+var nom = payload.Nombre[0] ++ payload.Nombre[1]
+var ape = payload.apellidoPaterno[0] ++ payload.apellidoPaterno[1]
+var apemat = (java!java::text::Normalizer::normalize(payload.materia[0] ++ payload.materia[1],"NFD") as String) replace /[\\\p{InCombiningDiacriticalMarks}+]/ with ""
+var year = substringBefore(payload.fechaNacimiento,'-')
+var tiempo = now() as String {format: "yyyy-MM-dd"}
+var longitud = (sizeOf(payload.materia) + sizeOf(payload.apellidoPaterno)) as String
+output application/json
+---
+payload ++ {"numeroEmpleado": upper(nom) ++ upper(ape) ++ '-' ++ year ++ "-" ++ upper(apemat) ++ longitud,
+	 		"fechaAlta": tiempo
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload]" doc:name="Guardar Nuevo Docente" doc:id="c7da0081-22ef-461c-987d-4a2474df2536" variableName="docenteNuevo"/>
+		<flow-ref doc:name="Llamada Crear Profesor Cliente" doc:id="4be454bb-f26d-4578-b7f6-40d1c25512ff" name="crear-profesor-cliente"/>
+		<ee:transform doc:name="Codigo Empleado" doc:id="012f1d25-f546-4a35-adb4-fb84bacbe45b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	numeroEmpleado: vars.docenteNuevo.numeroEmpleado
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
